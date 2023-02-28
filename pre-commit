@@ -1,0 +1,17 @@
+#!/bin/sh
+
+#Runs spotlessApply on files included in staging
+set -e
+filesToFormat="$(git --no-pager diff --name-status --no-color --cached | awk '$1 != "D" && $2 ~ /\.kts|\.java|\.kt/ { print $2}')"
+echo "files to format $filesToFormat"
+for sourceFilePath in $filesToFormat
+do
+  if [ -f "$sourceFilePath" ]; then
+  ./gradlew spotlessApply -PspotlessIdeHook="$(pwd)/$sourceFilePath"
+  git add $sourceFilePath
+  fi
+done;
+
+./gradlew test --daemon
+RESULT=$?
+exit $RESULT
