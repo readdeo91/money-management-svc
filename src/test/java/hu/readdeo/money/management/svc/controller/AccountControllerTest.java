@@ -3,9 +3,9 @@ package hu.readdeo.money.management.svc.controller;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import hu.readdeo.money.management.svc.account.Account;
-import hu.readdeo.money.management.svc.account.AccountRepository;
-import hu.readdeo.money.management.svc.account.AccountService;
+import hu.readdeo.money.management.svc.account.service.AccountPO;
+import hu.readdeo.money.management.svc.account.service.AccountRepository;
+import hu.readdeo.money.management.svc.account.service.AccountService;
 import hu.readdeo.money.management.svc.securitymock.WithMockCustomUser;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -209,8 +209,8 @@ class AccountControllerTest {
   @WithMockCustomUser
   @Test
   void delete() throws Exception {
-    Account newAccount = new Account().setCurrency("USD").setName("Usánka");
-    Account savedAccount = accountsService.create(newAccount);
+    AccountPO newAccount = new AccountPO().setCurrency("USD").setName("Usánka");
+    AccountPO savedAccount = accountsService.create(newAccount);
 
     Assertions.assertNotNull(savedAccount);
 
@@ -218,7 +218,7 @@ class AccountControllerTest {
         .andDo(print())
         .andExpect(status().isNoContent());
 
-    Optional<Account> deletedAccount = repository.findById(savedAccount.getId());
+    Optional<AccountPO> deletedAccount = repository.findById(savedAccount.getId());
     Assertions.assertFalse(deletedAccount.isPresent());
   }
 
@@ -230,7 +230,7 @@ class AccountControllerTest {
         .andDo(print())
         .andExpect(status().isNoContent());
 
-    Optional<Account> deletedAccount = repository.findById(1L);
+    Optional<AccountPO> deletedAccount = repository.findById(1L);
     Assertions.assertTrue(deletedAccount.isPresent());
   }
 }

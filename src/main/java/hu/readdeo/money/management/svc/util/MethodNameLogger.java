@@ -13,20 +13,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class MethodNameLogger {
 
-    @Value("${logging.methodnames}")
-    private boolean logMethodNames;
+  @Value("${logging.methodnames}")
+  private boolean logMethodNames;
 
-    @Pointcut("within(hu.readdeo.money.management.svc.account..*) ||" +
-            "within(hu.readdeo.money.management.svc.category..*) ||" +
-            "within(hu.readdeo.money.management.svc.transaction..*)")
-    private void everythingInMyApplication() {}
+  @Pointcut(
+      "within(hu.readdeo.money.management.svc.account..*) ||"
+          + "within(hu.readdeo.money.management.svc.category..*) ||"
+          + "within(hu.readdeo.money.management.svc.transaction..*)")
+  private void everythingInMyApplication() {}
 
-    @Before("hu.readdeo.money.management.svc.util.MethodNameLogger.everythingInMyApplication()")
-    public void logMethodName(JoinPoint joinPoint) {
-        final String[] classFullName = joinPoint.getSignature().getDeclaringTypeName().split("\\.");
-        final String className = classFullName[classFullName.length -1];
-        if (logMethodNames) {
-            log.debug("Called {}.{}", className, joinPoint.getSignature().getName());
-        }
+  @Before("hu.readdeo.money.management.svc.util.MethodNameLogger.everythingInMyApplication()")
+  public void logMethodName(JoinPoint joinPoint) {
+    final String[] classFullName = joinPoint.getSignature().getDeclaringTypeName().split("\\.");
+    final String className = classFullName[classFullName.length - 1];
+    if (logMethodNames) {
+      log.debug("Called {}.{}", className, joinPoint.getSignature().getName());
     }
+  }
 }

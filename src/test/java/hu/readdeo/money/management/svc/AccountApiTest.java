@@ -1,7 +1,7 @@
 package hu.readdeo.money.management.svc;
 
-import hu.readdeo.money.management.svc.account.Account;
-import hu.readdeo.money.management.svc.account.AccountService;
+import hu.readdeo.money.management.svc.account.service.AccountPO;
+import hu.readdeo.money.management.svc.account.service.AccountService;
 import hu.readdeo.money.management.svc.securitymock.WithMockCustomUser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +15,11 @@ public class AccountApiTest {
   @Test
   @WithMockCustomUser
   public void addAccountForUser() {
-    Account account = new Account();
+    AccountPO account = new AccountPO();
     account.setCurrency("HUF");
     account.setName("KH");
     account.setCredit(false);
-    Account savedAccount = accountService.create(account);
+    AccountPO savedAccount = accountService.create(account);
     System.out.println(savedAccount);
   }
 }

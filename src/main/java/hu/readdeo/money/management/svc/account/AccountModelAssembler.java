@@ -5,6 +5,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Affordance;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -38,24 +39,7 @@ public class AccountModelAssembler
             .collect(Collectors.toList());
     return CollectionModel.of(
         entityModelList,
-        linkTo(methodOn(AccountController.class).page(1, 20)).withRel("accountsPage"),
-        linkTo(methodOn(AccountController.class).all()).withRel("accounts"));
-  }
-
-  public CollectionModel<EntityModel<Account>> toPageModel(
-      int page, int size, List<Account> accountList) {
-    List<EntityModel<Account>> entityModelList =
-        accountList.stream()
-            .map(
-                account ->
-                    EntityModel.of(
-                        account,
-                        linkTo(methodOn(AccountController.class).one(account.getId()))
-                            .withSelfRel()))
-            .collect(Collectors.toList());
-    return CollectionModel.of(
-        entityModelList,
-        linkTo(methodOn(AccountController.class).page(page, size)).withRel("accountsPage"),
+        linkTo(methodOn(AccountController.class).page(Pageable.ofSize(20))).withRel("accountsPage"),
         linkTo(methodOn(AccountController.class).all()).withRel("accounts"));
   }
 }

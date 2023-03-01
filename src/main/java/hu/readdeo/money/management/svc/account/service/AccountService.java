@@ -1,4 +1,4 @@
-package hu.readdeo.money.management.svc.account;
+package hu.readdeo.money.management.svc.account.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -15,7 +15,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -29,43 +29,43 @@ public class AccountService {
   private final AccountRepository accountsRepository;
   private final AuthenticationFacade authenticationFacade;
 
-  @Value("${account.max.page.size:100}")
+  @Value("${account.max.page.size}")
   int maxPageSize;
 
-  public Account create(Account account) {
+  public AccountPO create(AccountPO account) {
     throwIfContainsId(account);
     setUser(account);
-    try {
-      return accountsRepository.save(account);
-    } catch (Exception e) {
-      throw createErrorResponse(account, e);
-    }
+    return saveOrErrorResponse(account);
   }
 
-  public Account findById(Long id) {
+  public AccountPO findById(Long id) {
     User user = authenticationFacade.getUser();
-    Optional<Account> accountOptional = accountsRepository.findFirstByUserAndId(user, id);
+    Optional<AccountPO> accountOptional = accountsRepository.findFirstByUserAndId(user, id);
     throwIfNotFound(accountOptional);
     return accountOptional.get();
   }
 
-  public List<Account> findAll() {
+  public List<AccountPO> findAll() {
     User user = authenticationFacade.getUser();
-    List<Account> accountList = accountsRepository.findByUser(user);
+    List<AccountPO> accountList = accountsRepository.findByUser(user);
     throwIfNotFound(accountList);
     return accountList;
   }
 
-  public List<Account> getPage(int page, int size) {
+  public Page<AccountPO> getPage(Pageable pageable) {
     User user = authenticationFacade.getUser();
-    size = limitSizeToMaxValue(size);
-    Pageable pageable = PageRequest.of(page, size);
-    List<Account> accountList = accountsRepository.findByUserOrderById(user, pageable);
+    Page<AccountPO> accountList = accountsRepository.findByUserOrderById(user, pageable);
     throwIfNotFound(accountList);
     return accountList;
   }
 
-  public Account update(Long id, Account accountUpdate) {
+  public AccountPO patch(Long id, JsonPatch patch) {
+    throwIfDoesntExist(id);
+    AccountPO patchedAccount = applyPatch(id, patch);
+    return update(id, patchedAccount);
+  }
+
+  public AccountPO update(Long id, AccountPO accountUpdate) {
     throwIfDoesntExist(id);
     setIdAndUser(id, accountUpdate);
     try {
@@ -81,31 +81,37 @@ public class AccountService {
     accountsRepository.deleteByUserAndId(user, id);
   }
 
-  private void setUser(Account account) {
+  private void setUser(AccountPO account) {
     User user = authenticationFacade.getUser();
     account.setUser(user);
   }
 
-  private void throwIfContainsId(Account account) {
+  private void throwIfContainsId(AccountPO account) {
     if (!ObjectUtils.isEmpty(account.getId())) {
       throw new ErrorResponse(
           null, null, "New entry cannot contain ID", null, HttpStatus.BAD_REQUEST);
     }
   }
 
-  private void setIdAndUser(Long id, Account accountUpdate) {
+  private void setIdAndUser(Long id, AccountPO accountUpdate) {
     User user = authenticationFacade.getUser();
     accountUpdate.setId(id);
     accountUpdate.setUser(user);
   }
 
-  private void throwIfNotFound(Optional<Account> accountObject) {
+  private void throwIfNotFound(Optional<AccountPO> accountObject) {
     if (ObjectUtils.isEmpty(accountObject)) {
       throw new ErrorResponse("Account not found", HttpStatus.NOT_FOUND);
     }
   }
 
-  private void throwIfNotFound(List<Account> accountList) {
+  private void throwIfNotFound(Page<AccountPO> accountList) {
+    if (ObjectUtils.isEmpty(accountList)) {
+      throw new ErrorResponse("No accounts found", HttpStatus.NOT_FOUND);
+    }
+  }
+
+  private void throwIfNotFound(List<AccountPO> accountList) {
     if (ObjectUtils.isEmpty(accountList)) {
       throw new ErrorResponse("No accounts found", HttpStatus.NOT_FOUND);
     }
@@ -125,14 +131,19 @@ public class AccountService {
     return size;
   }
 
-  public Account applyPatch(JsonPatch patch, Long id)
-      throws JsonPatchException, JsonProcessingException {
-    Account targetAccount = findById(id);
-    JsonNode patched = patch.apply(objectMapper.convertValue(targetAccount, JsonNode.class));
-    return objectMapper.treeToValue(patched, Account.class);
+  private AccountPO applyPatch(Long id, JsonPatch patch) {
+    AccountPO targetAccount = findById(id);
+    try {
+      JsonNode patched = patch.apply(objectMapper.convertValue(targetAccount, JsonNode.class));
+      return objectMapper.treeToValue(patched, AccountPO.class);
+    } catch (JsonPatchException | JsonProcessingException e) {
+      UUID errorId = UUID.randomUUID();
+      log.error("Failed to apply patch. errorId: {} Exception: {}", errorId, e);
+      throw new ErrorResponse("Failed to apply patch", errorId, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  private ErrorResponse createErrorResponse(Account account, Exception e) {
+  private ErrorResponse createErrorResponse(AccountPO account, Exception e) {
     UUID errorId = UUID.randomUUID();
     log.error(
         "Could not save new account: {} error: {}, errorId: {}", account, e.getMessage(), errorId);
@@ -144,7 +155,7 @@ public class AccountService {
         HttpStatus.SERVICE_UNAVAILABLE);
   }
 
-  private ErrorResponse updateErrorResponse(Account accountUpdate, Exception e) {
+  private ErrorResponse updateErrorResponse(AccountPO accountUpdate, Exception e) {
     UUID errorId = UUID.randomUUID();
     log.error(
         "Could not update account: {} Error: {} ErrorId: {}",
@@ -157,5 +168,13 @@ public class AccountService {
         "Could not update account",
         null,
         HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  private AccountPO saveOrErrorResponse(AccountPO account) {
+    try {
+      return accountsRepository.save(account);
+    } catch (Exception e) {
+      throw createErrorResponse(account, e);
+    }
   }
 }
