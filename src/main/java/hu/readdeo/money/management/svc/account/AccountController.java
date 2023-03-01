@@ -1,16 +1,15 @@
 package hu.readdeo.money.management.svc.account;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
+import hu.readdeo.money.management.svc.account.service.AccountServiceAdapter;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.IanaLinkRelations;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,60 +20,59 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AccountController {
 
-  private final AccountService accountService;
+  private final AccountServiceAdapter service;
   private final AccountModelAssembler accountModelAssembler;
+  private final PagedResourcesAssembler<Account> pagedResourcesAssembler;
 
   @PostMapping
-  public ResponseEntity<EntityModel<Account>> create(@RequestBody Account account) {
-    EntityModel<Account> entityModel =
-        accountModelAssembler.toModel(accountService.create(account));
+  public ResponseEntity<EntityModel<Account>> create(@Valid @RequestBody Account account) {
+    Account createdAccount = service.create(account);
+    EntityModel<Account> entityModel = accountModelAssembler.toModel(createdAccount);
     return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
         .body(entityModel);
   }
 
   @GetMapping
   public ResponseEntity<CollectionModel<EntityModel<Account>>> all() {
-    List<Account> accounts = accountService.findAll();
-    return new ResponseEntity<>(accountModelAssembler.toCollectionModel(accounts), HttpStatus.OK);
+    List<Account> accounts = service.findAll();
+    CollectionModel<EntityModel<Account>> accountsModel =
+        accountModelAssembler.toCollectionModel(accounts);
+    return ResponseEntity.ok(accountsModel);
   }
 
   @GetMapping(params = {"page", "size"})
-  public ResponseEntity<CollectionModel<EntityModel<Account>>> page(
-      @RequestParam("page") int page, @RequestParam("size") int size) {
-    List<Account> accounts = accountService.getPage(page, size);
-    return new ResponseEntity<>(
-        accountModelAssembler.toPageModel(page, size, accounts), HttpStatus.OK);
+  public ResponseEntity<CollectionModel<EntityModel<Account>>> page(Pageable pageable) {
+    Page<Account> accountPage = service.getPage(pageable);
+    PagedModel<EntityModel<Account>> pagedModel = pagedResourcesAssembler.toModel(accountPage);
+    return ResponseEntity.ok().contentType(MediaTypes.HAL_JSON).body(pagedModel);
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<EntityModel<Account>> one(@PathVariable("id") @Valid Long id) {
-    return new ResponseEntity<>(
-        accountModelAssembler.toModel(accountService.findById(id)), HttpStatus.OK);
+    Account account = service.findById(id);
+    EntityModel<Account> entityModel = accountModelAssembler.toModel(account);
+    return ResponseEntity.ok(entityModel);
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<EntityModel<Account>> update(
-      @PathVariable("id") @Valid Long id, @RequestBody Account updatedAccount) {
-    return new ResponseEntity<>(
-        accountModelAssembler.toModel(accountService.update(id, updatedAccount)), HttpStatus.OK);
+      @PathVariable("id") @Valid Long id, @RequestBody Account accountUpdate) {
+    Account updatedAccount = service.update(id, accountUpdate);
+    EntityModel<Account> entityModel = accountModelAssembler.toModel(updatedAccount);
+    return ResponseEntity.ok(entityModel);
   }
 
   @PatchMapping("/{id}")
   public ResponseEntity<EntityModel<Account>> patch(
       @PathVariable("id") @Valid Long id, @RequestBody JsonPatch patch) {
-    try {
-      Account patchedTransaction = accountService.applyPatch(patch, id);
-      accountService.update(id, patchedTransaction);
-      return ResponseEntity.ok(
-          accountModelAssembler.toModel(accountService.update(id, patchedTransaction)));
-    } catch (JsonPatchException | JsonProcessingException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
+    Account patchedAccount = service.patch(id, patch);
+    EntityModel<Account> entityModel = accountModelAssembler.toModel(patchedAccount);
+    return ResponseEntity.ok(entityModel);
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<?> delete(@PathVariable("id") @Valid Long id) {
-    accountService.delete(id);
+    service.delete(id);
     return ResponseEntity.noContent().build();
   }
 }

@@ -1,6 +1,6 @@
 package hu.readdeo.money.management.svc.configuration;
 
-import hu.readdeo.money.management.svc.account.Account;
+import hu.readdeo.money.management.svc.account.service.AccountPO;
 import hu.readdeo.money.management.svc.category.Category;
 import hu.readdeo.money.management.svc.transaction.service.TransactionModel;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
@@ -12,7 +12,7 @@ public class RepositoryRestConfiguration implements RepositoryRestConfigurer {
   public void configureRepositoryRestConfiguration(
       org.springframework.data.rest.core.config.RepositoryRestConfiguration config,
       CorsRegistry cors) {
-    config.exposeIdsFor(Account.class);
+    config.exposeIdsFor(AccountPO.class);
     config.exposeIdsFor(Category.class);
     config.exposeIdsFor(TransactionModel.class);
   }

@@ -2,7 +2,7 @@ package hu.readdeo.money.management.svc.transaction.service;
 
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import hu.readdeo.money.management.svc.account.Account;
+import hu.readdeo.money.management.svc.account.service.AccountPO;
 import hu.readdeo.money.management.svc.category.Category;
 import hu.readdeo.money.management.svc.security.model.User;
 import jakarta.persistence.*;
@@ -42,11 +42,11 @@ public class TransactionModel {
   @ManyToOne
   @NotNull(message = "sourceAccount missing")
   @JsonIdentityReference(alwaysAsId = true)
-  private Account sourceAccount;
+  private AccountPO sourceAccount;
 
   @ManyToOne
   @JsonIdentityReference(alwaysAsId = true)
-  private Account destinationAccount;
+  private AccountPO destinationAccount;
 
   @ManyToOne
   @NotNull(message = "mainCategory missing")

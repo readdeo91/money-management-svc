@@ -1,7 +1,7 @@
 package hu.readdeo.money.management.svc.transaction.service;
 
-import hu.readdeo.money.management.svc.account.Account;
-import hu.readdeo.money.management.svc.account.AccountService;
+import hu.readdeo.money.management.svc.account.service.AccountPO;
+import hu.readdeo.money.management.svc.account.service.AccountService;
 import hu.readdeo.money.management.svc.category.Category;
 import hu.readdeo.money.management.svc.category.CategoryService;
 import hu.readdeo.money.management.svc.security.util.AuthenticationFacade;
@@ -22,13 +22,13 @@ abstract class TransactionMapper {
   @Autowired AuthenticationFacade authenticationFacade;
 
   @Named("accountToId")
-  Long accountToId(Account account) {
+  Long accountToId(AccountPO account) {
     if (ObjectUtils.isEmpty(account)) return null;
     return account.getId();
   }
 
   @Named("accountFromId")
-  Account accountFromId(Long id) {
+  AccountPO accountFromId(Long id) {
     if (ObjectUtils.isEmpty(id)) return null;
     return accountService.findById(id);
   }

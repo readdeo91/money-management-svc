@@ -61,7 +61,10 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
 	compileOnly 'org.projectlombok:lombok'
+
+	// JSON Patch
 	implementation 'com.github.java-json-tools:json-patch:1.13'
+	implementation 'org.springframework.boot:spring-boot-starter-json'
 
 //	provided 'javax.servlet:javax.servlet-api:4.0.1'
 	implementation 'org.mapstruct:mapstruct:1.5.3.Final'
