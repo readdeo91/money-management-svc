@@ -1,7 +1,7 @@
 package hu.readdeo.money.management.svc.transaction;
 
 import com.github.fge.jsonpatch.JsonPatch;
-import hu.readdeo.money.management.svc.transaction.service.TransactionDTOAdapter;
+import hu.readdeo.money.management.svc.transaction.service.TransactionServiceAdapter;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class TransactionController {
 
-  private final TransactionDTOAdapter serviceAdapter;
+  private final TransactionServiceAdapter serviceAdapter;
   private final TransactionModelAssembler transactionModelAssembler;
   private final PagedResourcesAssembler<Transaction> pagedResourcesAssembler;
 
