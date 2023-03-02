@@ -1,4 +1,4 @@
-package hu.readdeo.money.management.svc.util;
+package hu.readdeo.money.management.svc.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
