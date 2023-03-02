@@ -1,4 +1,4 @@
-package hu.readdeo.money.management.svc.category;
+package hu.readdeo.money.management.svc.category.service;
 
 import hu.readdeo.money.management.svc.exception.ErrorResponse;
 import hu.readdeo.money.management.svc.security.util.AuthenticationFacade;
@@ -61,12 +61,12 @@ public class CategoryValidator {
     }
   }
 
-  private boolean isMainCategoryValid(Category category) {
+  private boolean isMainCategoryValid(CategoryPO category) {
     if (ObjectUtils.isEmpty(category)) return true;
     return ObjectUtils.isEmpty(category.getParentId());
   }
 
-  private boolean isSubCategoryValid(Category category) {
+  private boolean isSubCategoryValid(CategoryPO category) {
     if (ObjectUtils.isEmpty(category)) return true;
     return !ObjectUtils.isEmpty(category) && !ObjectUtils.isEmpty(category.getParentId());
   }

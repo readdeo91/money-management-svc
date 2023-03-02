@@ -3,7 +3,7 @@ package hu.readdeo.money.management.svc.transaction.service;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import hu.readdeo.money.management.svc.account.service.AccountPO;
-import hu.readdeo.money.management.svc.category.Category;
+import hu.readdeo.money.management.svc.category.service.CategoryPO;
 import hu.readdeo.money.management.svc.security.model.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -51,9 +51,9 @@ public class TransactionPO {
   @ManyToOne
   @NotNull(message = "mainCategory missing")
   @JsonIdentityReference(alwaysAsId = true)
-  private Category mainCategory;
+  private CategoryPO mainCategory;
 
   @ManyToOne
   @JsonIdentityReference(alwaysAsId = true)
-  private Category subCategory;
+  private CategoryPO subCategory;
 }

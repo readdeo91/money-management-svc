@@ -3,9 +3,9 @@ package hu.readdeo.money.management.svc.controller;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import hu.readdeo.money.management.svc.category.Category;
-import hu.readdeo.money.management.svc.category.CategoryRepository;
-import hu.readdeo.money.management.svc.category.CategoryService;
+import hu.readdeo.money.management.svc.category.service.CategoryPO;
+import hu.readdeo.money.management.svc.category.service.CategoryRepository;
+import hu.readdeo.money.management.svc.category.service.CategoryService;
 import hu.readdeo.money.management.svc.securitymock.WithMockCustomUser;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -111,8 +111,8 @@ class CategoryControllerTest {
   @WithMockCustomUser
   @Test
   void delete() throws Exception {
-    Category newCategory = new Category().setName("newCat").setParentId(1L);
-    Category savedCategory = categoryService.create(newCategory);
+    CategoryPO newCategory = new CategoryPO().setName("newCat").setParentId(1L);
+    CategoryPO savedCategory = categoryService.create(newCategory);
 
     Assertions.assertNotNull(savedCategory);
 
@@ -120,7 +120,7 @@ class CategoryControllerTest {
         .andDo(print())
         .andExpect(status().isNoContent());
 
-    Optional<Category> deletedTransaction = categoryRepository.findById(savedCategory.getId());
+    Optional<CategoryPO> deletedTransaction = categoryRepository.findById(savedCategory.getId());
     Assertions.assertFalse(deletedTransaction.isPresent());
   }
 }

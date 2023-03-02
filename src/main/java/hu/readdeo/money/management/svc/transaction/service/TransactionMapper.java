@@ -2,8 +2,8 @@ package hu.readdeo.money.management.svc.transaction.service;
 
 import hu.readdeo.money.management.svc.account.service.AccountPO;
 import hu.readdeo.money.management.svc.account.service.AccountService;
-import hu.readdeo.money.management.svc.category.Category;
-import hu.readdeo.money.management.svc.category.CategoryService;
+import hu.readdeo.money.management.svc.category.service.CategoryPO;
+import hu.readdeo.money.management.svc.category.service.CategoryService;
 import hu.readdeo.money.management.svc.security.util.AuthenticationFacade;
 import hu.readdeo.money.management.svc.transaction.Transaction;
 import java.util.List;
@@ -34,25 +34,25 @@ abstract class TransactionMapper {
   }
 
   @Named("mainCategoryToId")
-  Long mainCategoryToId(Category mainCategory) {
+  Long mainCategoryToId(CategoryPO mainCategory) {
     if (ObjectUtils.isEmpty(mainCategory)) return null;
     return mainCategory.getId();
   }
 
   @Named("subCategoryToId")
-  Long subCategoryToId(Category subCategory) {
+  Long subCategoryToId(CategoryPO subCategory) {
     if (ObjectUtils.isEmpty(subCategory)) return null;
     return subCategory.getId();
   }
 
   @Named("mainCategoryFromId")
-  Category mainCategoryFromId(Long id) {
+  CategoryPO mainCategoryFromId(Long id) {
     if (ObjectUtils.isEmpty(id)) return null;
     return categoryService.findById(id);
   }
 
   @Named("subCategoryFromId")
-  Category subCategoryFromId(Long id) {
+  CategoryPO subCategoryFromId(Long id) {
     if (ObjectUtils.isEmpty(id)) return null;
     return categoryService.findById(id);
   }

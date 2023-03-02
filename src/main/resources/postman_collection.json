@@ -156,7 +156,7 @@
 			"response": []
 		},
 		{
-			"name": "Transactions Page Read",
+			"name": "Transactions Read Page",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -225,7 +225,46 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"amount\": -200,\r\n    \"dateTime\": \"2020-01-17T18:11:31\",\r\n    \"description\": \"updated\",\r\n    \"mainCategory\": 1,\r\n    \"sourceAccount\": 1\r\n}",
+					"raw": "{\r\n    \"amount\": -200,\r\n    \"dateTime\": \"2020-01-17T18:11:31\",\r\n    \"description\": \"updated\",\r\n    \"mainCategory\": 1,\r\n    \"sourceAccount\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/transactions/1240c63e-8b6d-44ab-b18e-1367a22765b7",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"transactions",
+						"1240c63e-8b6d-44ab-b18e-1367a22765b7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transaction Patch",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[{\r\n    \"op\": \"replace\",\r\n    \"path\": \"/description\",\r\n    \"value\": \"patchedDescription\"\r\n}]",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -295,7 +334,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n        \"name\": \"Erste\",\r\n        \"currency\": \"HUF\"\r\n    }",
+					"raw": "{\r\n        \"name\": \"Erste\",\r\n        \"currency\": \"HUF\",\r\n        \"isCredit\": false\r\n    }",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -303,11 +342,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/accounts",
+					"raw": "{{baseUrl}}/api/accounts",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
+						"api",
 						"accounts"
 					]
 				}
@@ -337,11 +377,12 @@
 					}
 				],
 				"url": {
-					"raw": "{{baseUrl}}/accounts/2",
+					"raw": "{{baseUrl}}/api/accounts/2",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
+						"api",
 						"accounts",
 						"2"
 					]
@@ -350,7 +391,7 @@
 			"response": []
 		},
 		{
-			"name": "Accounts  Read",
+			"name": "Account  Read All",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -372,11 +413,12 @@
 					}
 				],
 				"url": {
-					"raw": "{{baseUrl}}/accounts",
+					"raw": "{{baseUrl}}/api/accounts",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
+						"api",
 						"accounts"
 					]
 				}
@@ -409,13 +451,53 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/accounts/1",
+					"raw": "{{baseUrl}}/api/accounts/1",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
+						"api",
 						"accounts",
 						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Account Patch",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[{\r\n    \"op\": \"replace\",\r\n    \"path\": \"/name\",\r\n    \"value\": \"patchedName\"\r\n}]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/accounts/2",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"accounts",
+						"2"
 					]
 				}
 			},
@@ -439,11 +521,12 @@
 					}
 				],
 				"url": {
-					"raw": "{{baseUrl}}/accounts/1",
+					"raw": "{{baseUrl}}/api/accounts/1",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
+						"api",
 						"accounts",
 						"1"
 					]
@@ -469,7 +552,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "    {\r\n        \"name\": \"testadd\",\r\n        \"parentId\": 1\r\n    }",
+					"raw": "    {\r\n        \"name\": \"testadd\",\r\n        \"parentId\": 1,\r\n        \"color\": \"green\"\r\n    }",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -477,11 +560,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/categories",
+					"raw": "{{baseUrl}}/api/categories",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
+						"api",
 						"categories"
 					]
 				}
@@ -511,13 +595,49 @@
 					}
 				],
 				"url": {
-					"raw": "{{baseUrl}}/categories/1",
+					"raw": "{{baseUrl}}/api/categories/1",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
+						"api",
 						"categories",
 						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Category  Read All",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/categories",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"categories"
 					]
 				}
 			},
@@ -541,7 +661,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"testadd\",\r\n    \"parent\": null\r\n}",
+					"raw": "{\r\n    \"name\": \"testadd\",\r\n    \"parentId\": 2,\r\n    \"color\": \"yellow\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -549,13 +669,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/api/category/2",
+					"raw": "{{baseUrl}}/api/categories/2",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"category",
+						"categories",
 						"2"
 					]
 				}
@@ -580,14 +700,14 @@
 					}
 				],
 				"url": {
-					"raw": "{{baseUrl}}/api/category/11",
+					"raw": "{{baseUrl}}/api/categories/3",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"category",
-						"11"
+						"categories",
+						"3"
 					]
 				}
 			},

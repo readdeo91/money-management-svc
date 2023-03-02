@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
-import hu.readdeo.money.management.svc.category.CategoryValidator;
+import hu.readdeo.money.management.svc.category.service.CategoryValidator;
 import hu.readdeo.money.management.svc.exception.ErrorResponse;
 import hu.readdeo.money.management.svc.security.model.User;
 import hu.readdeo.money.management.svc.security.util.AuthenticationFacade;
