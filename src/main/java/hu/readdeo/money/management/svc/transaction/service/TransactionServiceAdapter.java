@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class TransactionDTOAdapter {
+public class TransactionServiceAdapter {
 
   private final TransactionService service;
   private final TransactionMapper mapper;
 
   public Transaction create(Transaction transaction) {
-    TransactionModel transactionModel = mapper.toTransactionModel(transaction);
+    TransactionPO transactionModel = mapper.toTransactionModel(transaction);
     return mapper.toTransactionDTO(service.create(transactionModel));
   }
 
@@ -25,7 +25,7 @@ public class TransactionDTOAdapter {
   }
 
   public Page<Transaction> getPage(Pageable pageable) {
-    Page<TransactionModel> transactionModelPage = service.getPage(pageable);
+    Page<TransactionPO> transactionModelPage = service.getPage(pageable);
     return transactionModelPage.map(mapper::toTransactionDTO);
   }
 
@@ -34,7 +34,7 @@ public class TransactionDTOAdapter {
   }
 
   public Transaction update(UUID id, Transaction transactionUpdate) {
-    TransactionModel transactionUpdateModel = mapper.toTransactionModel(transactionUpdate);
+    TransactionPO transactionUpdateModel = mapper.toTransactionModel(transactionUpdate);
     return mapper.toTransactionDTO(service.update(id, transactionUpdateModel));
   }
 

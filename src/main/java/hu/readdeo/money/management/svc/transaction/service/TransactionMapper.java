@@ -64,9 +64,9 @@ abstract class TransactionMapper {
       qualifiedByName = "accountToId")
   @Mapping(source = "mainCategory", target = "mainCategory", qualifiedByName = "mainCategoryToId")
   @Mapping(source = "subCategory", target = "subCategory", qualifiedByName = "subCategoryToId")
-  public abstract Transaction toTransactionDTO(TransactionModel transaction);
+  public abstract Transaction toTransactionDTO(TransactionPO transaction);
 
-  public abstract List<Transaction> toTransactionDTOList(List<TransactionModel> transactionList);
+  public abstract List<Transaction> toTransactionDTOList(List<TransactionPO> transactionList);
 
   @Mapping(target = "user", ignore = true)
   @Mapping(source = "sourceAccount", target = "sourceAccount", qualifiedByName = "accountFromId")
@@ -76,10 +76,10 @@ abstract class TransactionMapper {
       qualifiedByName = "accountFromId")
   @Mapping(source = "mainCategory", target = "mainCategory", qualifiedByName = "mainCategoryFromId")
   @Mapping(source = "subCategory", target = "subCategory", qualifiedByName = "subCategoryFromId")
-  public abstract TransactionModel toTransactionModel(Transaction transactionDTO);
+  public abstract TransactionPO toTransactionModel(Transaction transactionDTO);
 
   @AfterMapping
-  void mapUserInTransaction(TransactionModel transaction) {
+  void mapUserInTransaction(TransactionPO transaction) {
     transaction.setUser(authenticationFacade.getUser());
   }
 }

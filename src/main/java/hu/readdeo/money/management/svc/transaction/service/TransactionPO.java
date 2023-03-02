@@ -21,7 +21,7 @@ import lombok.experimental.Accessors;
 @Table(name = "transaction", schema = "public")
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransactionModel {
+public class TransactionPO {
   @Id private UUID id;
 
   @ManyToOne

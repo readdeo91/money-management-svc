@@ -30,33 +30,33 @@ public class TransactionService {
   private final AuthenticationFacade auth;
 
   @Transactional
-  public TransactionModel create(TransactionModel transaction) {
+  public TransactionPO create(TransactionPO transaction) {
     validateCreation(transaction);
     setUserAndAddId(transaction);
     return saveOrErrorResponse(transaction);
   }
 
-  public TransactionModel findById(UUID id) {
-    TransactionModel transaction =
+  public TransactionPO findById(UUID id) {
+    TransactionPO transaction =
         transactionsRepository.findFirstByUserAndId(auth.getUser(), id).orElse(null);
     throwIfNotFound(transaction);
     return transaction;
   }
 
-  public Page<TransactionModel> getPage(Pageable pageable) {
-    Page<TransactionModel> transactionPage =
+  public Page<TransactionPO> getPage(Pageable pageable) {
+    Page<TransactionPO> transactionPage =
         transactionsRepository.findByUserOrderByDateTimeDesc(auth.getUser(), pageable);
     throwIfNotFound(transactionPage);
     return transactionPage;
   }
 
-  public TransactionModel patch(UUID id, JsonPatch patch) {
+  public TransactionPO patch(UUID id, JsonPatch patch) {
     throwIfDoesntExist(id);
-    TransactionModel patchedTransaction = applyPatch(patch, id);
+    TransactionPO patchedTransaction = applyPatch(patch, id);
     return update(id, patchedTransaction);
   }
 
-  public TransactionModel update(UUID id, TransactionModel transactionUpdate) {
+  public TransactionPO update(UUID id, TransactionPO transactionUpdate) {
     throwIfDoesntExist(id);
     setIdAndUser(id, transactionUpdate);
     categoryValidator.validateCategories(transactionUpdate);
@@ -74,29 +74,29 @@ public class TransactionService {
     transactionsRepository.deleteByUserAndId(user, id);
   }
 
-  private void setIdAndUser(UUID id, TransactionModel transactionUpdate) {
+  private void setIdAndUser(UUID id, TransactionPO transactionUpdate) {
     transactionUpdate.setId(id);
     transactionUpdate.setUser(auth.getUser());
   }
 
-  private void setUserAndAddId(TransactionModel transaction) {
+  private void setUserAndAddId(TransactionPO transaction) {
     transaction.setUser(auth.getUser());
     transaction.setId(UUID.randomUUID());
   }
 
-  private void throwIfContainsId(TransactionModel transaction) {
+  private void throwIfContainsId(TransactionPO transaction) {
     if (!ObjectUtils.isEmpty(transaction.getId())) {
       throw new ErrorResponse("", "", "New entry cannot contain ID", "", HttpStatus.BAD_REQUEST);
     }
   }
 
-  private void throwIfNotFound(TransactionModel transactionObject) {
+  private void throwIfNotFound(TransactionPO transactionObject) {
     if (ObjectUtils.isEmpty(transactionObject)) {
       throw new ErrorResponse("Transaction not found", HttpStatus.NOT_FOUND);
     }
   }
 
-  private void throwIfNotFound(Page<TransactionModel> transactionObject) {
+  private void throwIfNotFound(Page<TransactionPO> transactionObject) {
     if (ObjectUtils.isEmpty(transactionObject)) {
       throw new ErrorResponse("Transaction not found", HttpStatus.NOT_FOUND);
     }
@@ -108,12 +108,12 @@ public class TransactionService {
     }
   }
 
-  private TransactionModel applyPatch(JsonPatch patch, UUID id) {
-    TransactionModel targetTransaction = findById(id);
+  private TransactionPO applyPatch(JsonPatch patch, UUID id) {
+    TransactionPO targetTransaction = findById(id);
     ObjectMapper objectMapper = new ObjectMapper();
     try {
       JsonNode patched = patch.apply(objectMapper.convertValue(targetTransaction, JsonNode.class));
-      return objectMapper.treeToValue(patched, TransactionModel.class);
+      return objectMapper.treeToValue(patched, TransactionPO.class);
     } catch (JsonPatchException | JsonProcessingException e) {
       UUID errorId = UUID.randomUUID();
       log.error("Failed to apply patch. errorId: {} Exception: {}", errorId, e);
@@ -121,7 +121,7 @@ public class TransactionService {
     }
   }
 
-  private ErrorResponse createErrorResponse(TransactionModel transaction, Exception e) {
+  private ErrorResponse createErrorResponse(TransactionPO transaction, Exception e) {
     UUID errorId = UUID.randomUUID();
     log.error(
         "Could not save new transaction: {} Exception: {}, errorId: {}", transaction, e, errorId);
@@ -129,21 +129,21 @@ public class TransactionService {
         "", errorId.toString(), "Could not create transaction", "", HttpStatus.SERVICE_UNAVAILABLE);
   }
 
-  private ErrorResponse updateErrorResponse(TransactionModel transactionUpdate, Exception e) {
+  private ErrorResponse updateErrorResponse(TransactionPO transactionUpdate, Exception e) {
     UUID errorId = UUID.randomUUID();
     log.error(
         "Could not update transaction: {} Error: {} ErrorId: {}", transactionUpdate, e, errorId);
     return new ErrorResponse("", errorId.toString(), "", "", HttpStatus.SERVICE_UNAVAILABLE);
   }
 
-  private void throwIfTransferInvalid(TransactionModel transaction) {
+  private void throwIfTransferInvalid(TransactionPO transaction) {
     if (isTransferAndAmountIsPositive(transaction)) {
       throw new ErrorResponse(
           "Amount cannot be positive for a transfer type transaction", HttpStatus.BAD_REQUEST);
     }
   }
 
-  private boolean isTransferAndAmountIsPositive(TransactionModel transaction) {
+  private boolean isTransferAndAmountIsPositive(TransactionPO transaction) {
     return !ObjectUtils.isEmpty(transaction.getDestinationAccount())
         && bigDecimalIsPositive(transaction.getAmount());
   }
@@ -152,7 +152,7 @@ public class TransactionService {
     return bigDecimal.compareTo(BigDecimal.ZERO) > 0;
   }
 
-  private TransactionModel saveOrErrorResponse(TransactionModel transaction) {
+  private TransactionPO saveOrErrorResponse(TransactionPO transaction) {
     try {
       return transactionsRepository.save(transaction);
     } catch (Exception e) {
@@ -160,7 +160,7 @@ public class TransactionService {
     }
   }
 
-  private void validateCreation(TransactionModel transaction) {
+  private void validateCreation(TransactionPO transaction) {
     throwIfContainsId(transaction);
     throwIfTransferInvalid(transaction);
     categoryValidator.validateCategories(transaction);
