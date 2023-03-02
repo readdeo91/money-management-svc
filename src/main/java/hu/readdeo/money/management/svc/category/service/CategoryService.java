@@ -1,4 +1,4 @@
-package hu.readdeo.money.management.svc.category;
+package hu.readdeo.money.management.svc.category.service;
 
 import hu.readdeo.money.management.svc.exception.ErrorResponse;
 import hu.readdeo.money.management.svc.security.model.User;
@@ -21,7 +21,7 @@ public class CategoryService {
   private final CategoryRepository categoryRepository;
   private final AuthenticationFacade authenticationFacade;
 
-  public Category create(Category category) {
+  public CategoryPO create(CategoryPO category) {
     throwIfContainsId(category);
     category.setUser(authenticationFacade.getUser());
     try {
@@ -31,21 +31,21 @@ public class CategoryService {
     }
   }
 
-  public Category findById(Long id) {
+  public CategoryPO findById(Long id) {
     User user = authenticationFacade.getUser();
-    Optional<Category> categoryOptional = categoryRepository.findByUserAndId(user, id);
+    Optional<CategoryPO> categoryOptional = categoryRepository.findByUserAndId(user, id);
     throwIfNotFound(categoryOptional);
     return categoryOptional.get();
   }
 
-  public List<Category> findAll() {
+  public List<CategoryPO> findAll() {
     User user = authenticationFacade.getUser();
-    List<Category> categoryList = categoryRepository.findByUser(user);
+    List<CategoryPO> categoryList = categoryRepository.findByUser(user);
     throwIfNotFound(categoryList);
     return categoryList;
   }
 
-  public Category update(Long id, Category categoryUpdate) {
+  public CategoryPO update(Long id, CategoryPO categoryUpdate) {
     throwIfDoesntExist(id);
     setIdAndUser(id, categoryUpdate);
     try {
@@ -61,7 +61,7 @@ public class CategoryService {
     categoryRepository.deleteByIdAndUser(id, user);
   }
 
-  private void setIdAndUser(Long id, Category updatedCategory) {
+  private void setIdAndUser(Long id, CategoryPO updatedCategory) {
     updatedCategory.setId(id);
     updatedCategory.setUser(authenticationFacade.getUser());
   }
@@ -71,13 +71,13 @@ public class CategoryService {
     return categoryRepository.existsByUserAndId(user, id);
   }
 
-  private void throwIfNotFound(Optional<Category> categoryObject) {
+  private void throwIfNotFound(Optional<CategoryPO> categoryObject) {
     if (ObjectUtils.isEmpty(categoryObject)) {
       throw new ErrorResponse("Category not found", HttpStatus.NOT_FOUND);
     }
   }
 
-  private void throwIfNotFound(List<Category> categoryList) {
+  private void throwIfNotFound(List<CategoryPO> categoryList) {
     if (ObjectUtils.isEmpty(categoryList)) {
       throw new ErrorResponse("Category not found", HttpStatus.NOT_FOUND);
     }
@@ -90,13 +90,13 @@ public class CategoryService {
     }
   }
 
-  private void throwIfContainsId(Category category) {
+  private void throwIfContainsId(CategoryPO category) {
     if (!ObjectUtils.isEmpty(category.getId())) {
       throw new ErrorResponse("", "", "New entry cannot contain ID", "", HttpStatus.BAD_REQUEST);
     }
   }
 
-  private ErrorResponse createErrorResponse(Category category, Exception e) {
+  private ErrorResponse createErrorResponse(CategoryPO category, Exception e) {
     UUID errorId = UUID.randomUUID();
     log.error(
         "Could not save new category: {} error: {}, errorId: {}",
@@ -111,7 +111,7 @@ public class CategoryService {
         HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
-  private ErrorResponse updateErrorResponse(Category categoryUpdate, Exception e) {
+  private ErrorResponse updateErrorResponse(CategoryPO categoryUpdate, Exception e) {
     UUID errorId = UUID.randomUUID();
     log.error(
         "Could not update category: {} Error: {} ErrorId: {}",
