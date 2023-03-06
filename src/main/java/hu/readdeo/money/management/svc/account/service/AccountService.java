@@ -40,9 +40,9 @@ public class AccountService {
 
   public AccountPO findById(Long id) {
     User user = authenticationFacade.getUser();
-    Optional<AccountPO> accountOptional = accountsRepository.findFirstByUserAndId(user, id);
-    throwIfNotFound(accountOptional);
-    return accountOptional.get();
+    AccountPO account = accountsRepository.findFirstByUserAndId(user, id).orElse(null);
+    throwIfNotFound(account);
+    return account;
   }
 
   public List<AccountPO> findAll() {
@@ -99,8 +99,8 @@ public class AccountService {
     accountUpdate.setUser(user);
   }
 
-  private void throwIfNotFound(Optional<AccountPO> accountObject) {
-    if (ObjectUtils.isEmpty(accountObject)) {
+  private void throwIfNotFound(AccountPO account) {
+    if (ObjectUtils.isEmpty(account)) {
       throw new ErrorResponse("Account not found", HttpStatus.NOT_FOUND);
     }
   }

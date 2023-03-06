@@ -33,9 +33,9 @@ public class CategoryService {
 
   public CategoryPO findById(Long id) {
     User user = authenticationFacade.getUser();
-    Optional<CategoryPO> categoryOptional = categoryRepository.findByUserAndId(user, id);
-    throwIfNotFound(categoryOptional);
-    return categoryOptional.get();
+    CategoryPO category = categoryRepository.findByUserAndId(user, id).orElse(null);
+    throwIfNotFound(category);
+    return category;
   }
 
   public List<CategoryPO> findAll() {
@@ -58,7 +58,7 @@ public class CategoryService {
   @Transactional
   public void delete(Long id) {
     User user = authenticationFacade.getUser();
-    categoryRepository.deleteByIdAndUser(id, user);
+    categoryRepository.deleteByUserAndId(user, id);
   }
 
   private void setIdAndUser(Long id, CategoryPO updatedCategory) {
@@ -71,7 +71,7 @@ public class CategoryService {
     return categoryRepository.existsByUserAndId(user, id);
   }
 
-  private void throwIfNotFound(Optional<CategoryPO> categoryObject) {
+  private void throwIfNotFound(CategoryPO categoryObject) {
     if (ObjectUtils.isEmpty(categoryObject)) {
       throw new ErrorResponse("Category not found", HttpStatus.NOT_FOUND);
     }
