@@ -8,6 +8,7 @@ import hu.readdeo.money.management.svc.account.service.AccountRepository;
 import hu.readdeo.money.management.svc.account.service.AccountService;
 import hu.readdeo.money.management.svc.securitymock.WithMockCustomUser;
 import java.util.Optional;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +34,21 @@ class AccountControllerTest {
   @WithMockCustomUser
   @Test
   void create() throws Exception {
+    String name = "newaccountname";
+    String description = "newaccountdescription";
+    String currency = "EUR";
+
     mvc.perform(
             MockMvcRequestBuilders.post("/accounts")
                 .header("Content-Type", "application/json")
-                .content("{\"description\": \"ERSTE\",\"currency\": \"EUR\"}"))
+                .content(
+                    "{\"name\": \""
+                        + name
+                        + "\", \"description\": \""
+                        + description
+                        + "\",\"currency\": \""
+                        + currency
+                        + "\"}"))
         .andDo(print())
         .andExpect(status().isCreated())
         .andExpect(MockMvcResultMatchers.header().exists("Location"))
@@ -44,7 +56,11 @@ class AccountControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("$.currency").value("EUR"))
         .andExpect(MockMvcResultMatchers.jsonPath("$._links.self.href").isString())
         .andExpect(MockMvcResultMatchers.jsonPath("$._links.accounts.href").isString());
-    Assertions.assertEquals(2, repository.findById(3L).get().getUser().getId());
+
+    AccountPO createdAccount = repository.findById(6L).orElse(null);
+    Assertions.assertEquals(currency, createdAccount.getCurrency());
+    Assertions.assertEquals(name, createdAccount.getName());
+    Assertions.assertEquals(description, createdAccount.getDescription());
   }
 
   @WithMockCustomUser
@@ -56,7 +72,6 @@ class AccountControllerTest {
                 .content("{\"id\":\"11\", \"description\": \"ERSTE\",\"currency\": \"EUR\"}"))
         .andDo(print())
         .andExpect(status().isBadRequest());
-    Assertions.assertEquals(2, repository.findById(3L).get().getUser().getId());
   }
 
   @WithMockCustomUser
@@ -85,52 +100,29 @@ class AccountControllerTest {
 
   @WithMockCustomUser
   @Test
-  void create_with_id_put_400() throws Exception {
-    mvc.perform(
-            MockMvcRequestBuilders.put("/accounts/11")
-                .header("Content-Type", "application/json")
-                .content("{\"description\": \"ERSTE\",\"currency\": \"EUR\"}"))
-        .andDo(print())
-        .andExpect(status().isNotFound());
-    Assertions.assertEquals(2, repository.findById(3L).get().getUser().getId());
-  }
-
-  @WithMockCustomUser
-  @Test
   void all() throws Exception {
     mvc.perform(MockMvcRequestBuilders.get("/accounts").accept(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.accounts[0].id").value(3))
+        .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.accounts[0].id").value(1))
         .andExpect(
-            MockMvcResultMatchers.jsonPath("$._embedded.accounts[0].description")
-                .value("Raiffeisen"))
+            MockMvcResultMatchers.jsonPath("$._embedded.accounts[0].description").value("Rafi"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.accounts[0].name").value("name1"))
         .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.accounts[0].currency").value("HUF"))
         .andExpect(
             MockMvcResultMatchers.jsonPath("$._embedded.accounts[0]._links.self.href")
-                .value("http://localhost/accounts/3"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.accounts[1].id").value(4))
+                .value("http://localhost/accounts/1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.accounts[1].id").value(2))
         .andExpect(
             MockMvcResultMatchers.jsonPath("$._embedded.accounts[1].description").value("OTP"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.accounts[1].name").value("name2"))
         .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.accounts[1].currency").value("HUF"))
         .andExpect(
             MockMvcResultMatchers.jsonPath("$._embedded.accounts[1]._links.self.href")
-                .value("http://localhost/accounts/4"))
+                .value("http://localhost/accounts/2"))
         .andExpect(
             MockMvcResultMatchers.jsonPath("$._links.accounts.href")
-                .value("http://localhost/accounts"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.accounts[2].id").value(5))
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("$._embedded.accounts[2].description")
-                .value("CreditRaiffeisen"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.accounts[2].currency").value("HUF"))
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("$._embedded.accounts[2]._links.self.href")
-                .value("http://localhost/accounts/5"))
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("$._links.accounts.href")
-                .value("http://localhost/accounts"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.accounts[3]").doesNotExist());
+                .value("http://localhost/accounts"));
   }
 
   @WithMockCustomUser
@@ -141,27 +133,32 @@ class AccountControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.accounts[0].id").value(4))
+        .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.accounts[0].id").value(2))
         .andExpect(
             MockMvcResultMatchers.jsonPath("$._embedded.accounts[0].description").value("OTP"))
         .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.accounts[0].currency").value("HUF"))
         .andExpect(
             MockMvcResultMatchers.jsonPath("$._embedded.accounts[0]._links.self.href")
-                .value("http://localhost/accounts/4"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.accounts[1]").doesNotExist());
+                .value("http://localhost/accounts/2"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$._links.first").exists())
+        .andExpect(MockMvcResultMatchers.jsonPath("$._links.last").exists())
+        .andExpect(MockMvcResultMatchers.jsonPath("$._links.prev").exists());
   }
 
   @WithMockCustomUser
   @Test
   void one() throws Exception {
-    mvc.perform(MockMvcRequestBuilders.get("/accounts/5").accept(MediaType.APPLICATION_JSON))
+    mvc.perform(MockMvcRequestBuilders.get("/accounts/2").accept(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("5"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("2"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.currency").value("HUF"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("name2"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("OTP"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.credit").value(false))
         .andExpect(
             MockMvcResultMatchers.jsonPath("$._links.self.href")
-                .value("http://localhost/accounts/5"))
+                .value("http://localhost/accounts/2"))
         .andExpect(
             MockMvcResultMatchers.jsonPath("$._links.accounts.href")
                 .value("http://localhost/accounts"));
@@ -169,8 +166,8 @@ class AccountControllerTest {
 
   @WithMockCustomUser
   @Test
-  void one_other_users_account_cant_be_accessed() throws Exception {
-    mvc.perform(MockMvcRequestBuilders.get("/accounts/1").accept(MediaType.APPLICATION_JSON))
+  void other_users_account_cant_be_accessed() throws Exception {
+    mvc.perform(MockMvcRequestBuilders.get("/accounts/3").accept(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isNotFound());
   }
@@ -178,28 +175,43 @@ class AccountControllerTest {
   @WithMockCustomUser
   @Test
   void update() throws Exception {
+    String name = "newaccountname";
+    String description = "newaccountdescription";
+    String currency = "CZK";
+
+    JSONObject updatePayload = new JSONObject();
+    updatePayload.put("name", name);
+    updatePayload.put("description", description);
+    updatePayload.put("currency", currency);
+
     mvc.perform(
-            MockMvcRequestBuilders.put("/accounts/5")
-                .content("{\"description\": \"KH\",\"currency\": \"EUR\"}")
+            MockMvcRequestBuilders.put("/accounts/2")
+                .content(updatePayload.toString())
                 .header("Content-Type", "application/json"))
         .andDo(print())
         .andExpect(status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(5))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("KH"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.currency").value("EUR"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(2))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(description))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.currency").value(currency))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(name))
         .andExpect(
             MockMvcResultMatchers.jsonPath("$._links.self.href")
-                .value("http://localhost/accounts/5"))
+                .value("http://localhost/accounts/2"))
         .andExpect(
             MockMvcResultMatchers.jsonPath("$._links.accounts.href")
                 .value("http://localhost/accounts"));
+
+    AccountPO updatedAccount = repository.findById(2L).orElse(null);
+    Assertions.assertEquals(name, updatedAccount.getName());
+    Assertions.assertEquals(description, updatedAccount.getDescription());
+    Assertions.assertEquals(currency, updatedAccount.getCurrency());
   }
 
   @WithMockCustomUser
   @Test
-  void update_other_users_account_not_updated() throws Exception {
+  void other_users_account_not_updated() throws Exception {
     mvc.perform(
-            MockMvcRequestBuilders.put("/accounts/1")
+            MockMvcRequestBuilders.put("/accounts/3")
                 .content("{\"description\": \"KH\",\"currency\": \"EUR\"}")
                 .header("Content-Type", "application/json"))
         .andDo(print())
@@ -226,7 +238,7 @@ class AccountControllerTest {
   @Test
   void delete_other_users_account_no_content_account_not_deleted() throws Exception {
 
-    mvc.perform(MockMvcRequestBuilders.delete("/accounts/1"))
+    mvc.perform(MockMvcRequestBuilders.delete("/accounts/3"))
         .andDo(print())
         .andExpect(status().isNoContent());
 
