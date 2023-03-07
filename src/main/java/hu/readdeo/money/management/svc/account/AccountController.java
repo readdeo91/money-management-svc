@@ -43,7 +43,8 @@ public class AccountController {
   @GetMapping(params = {"page", "size"})
   public ResponseEntity<CollectionModel<EntityModel<Account>>> page(Pageable pageable) {
     Page<Account> accountPage = service.getPage(pageable);
-    PagedModel<EntityModel<Account>> pagedModel = pagedResourcesAssembler.toModel(accountPage, accountModelAssembler);
+    PagedModel<EntityModel<Account>> pagedModel =
+        pagedResourcesAssembler.toModel(accountPage, accountModelAssembler);
     return ResponseEntity.ok().contentType(MediaTypes.HAL_JSON).body(pagedModel);
   }
 

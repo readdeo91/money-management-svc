@@ -5,7 +5,6 @@ import hu.readdeo.money.management.svc.security.model.User;
 import hu.readdeo.money.management.svc.security.util.AuthenticationFacade;
 import jakarta.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
