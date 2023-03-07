@@ -7,15 +7,15 @@ INSERT INTO public.user_roles(user_id, role_id) VALUES (1, 1);
 INSERT INTO public.user_roles(user_id, role_id) VALUES (1, 2);
 INSERT INTO public.user_roles(user_id, role_id) VALUES (1, 3);
 
-INSERT INTO public.accounts (id, currency, description, user_id, is_credit) VALUES (DEFAULT, 'HUF', 'Rafi', 1, false);
-INSERT INTO public.accounts (id, currency, description, user_id, is_credit) VALUES (DEFAULT, 'HUF', 'OTP', 1, false);
+INSERT INTO public.accounts (id, name, currency, description, user_id, is_credit) VALUES (DEFAULT, 'name1', 'HUF', 'Rafi', 1, false);
+INSERT INTO public.accounts (id, name, currency, description, user_id, is_credit) VALUES (DEFAULT, 'name2', 'HUF', 'OTP', 1, false);
 
 INSERT INTO public.users (id, created_at, updated_at, email, name, password, username) VALUES (DEFAULT, null, null, 'asd2@asd.com', 'readdeo2', '$2a$10$0Bxh9jqp2BhEzkCiGOWtTeAUg7/YZ9oPw8y5P/3khYG..2RQAkmAu', 'readdeo2');
 INSERT INTO public.user_roles(user_id, role_id) VALUES (2, 1);
 
-INSERT INTO public.accounts (id, currency, description, user_id, is_credit) VALUES (DEFAULT, 'HUF', 'Raiffeisen', 2, false);
-INSERT INTO public.accounts (id, currency, description, user_id, is_credit) VALUES (DEFAULT, 'HUF', 'OTP', 2, false);
-INSERT INTO public.accounts (id, currency, description, user_id, is_credit) VALUES (DEFAULT, 'HUF', 'CreditRaiffeisen', 2, true);
+INSERT INTO public.accounts (id, name, currency, description, user_id, is_credit) VALUES (DEFAULT, 'name3', 'HUF', 'Raiffeisen', 2, false);
+INSERT INTO public.accounts (id, name, currency, description, user_id, is_credit) VALUES (DEFAULT, 'name4', 'HUF', 'OTP', 2, false);
+INSERT INTO public.accounts (id, name, currency, description, user_id, is_credit) VALUES (DEFAULT, 'name5', 'HUF', 'CreditRaiffeisen', 2, true);
 
 INSERT INTO public.category (id, color, name, parent_id, user_id) VALUES (DEFAULT, null, 'Food', null, 1);
 INSERT INTO public.category (id, color, name, parent_id, user_id) VALUES (DEFAULT, null, 'Grocery', 1, 1);
