@@ -40,28 +40,46 @@ class AccountControllerTest {
     String currency = "EUR";
 
     mvc.perform(
-            MockMvcRequestBuilders.post("/accounts")
-                .header("Content-Type", "application/json")
-                .content(
-                    "{\"name\": \""
-                        + name
-                        + "\", \"description\": \""
-                        + description
-                        + "\",\"currency\": \""
-                        + currency
-                        + "\"}"))
-        .andDo(print())
-        .andExpect(status().isCreated())
-        .andExpect(MockMvcResultMatchers.header().exists("Location"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(6))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.currency").value("EUR"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$._links.self.href").isString())
-        .andExpect(MockMvcResultMatchers.jsonPath("$._links.accounts.href").isString());
+                    MockMvcRequestBuilders.post("/accounts")
+                            .header("Content-Type", "application/json")
+                            .content(
+                                    "{\"name\": \""
+                                            + name
+                                            + "\", \"description\": \""
+                                            + description
+                                            + "\",\"currency\": \""
+                                            + currency
+                                            + "\"}"))
+            .andDo(print())
+            .andExpect(status().isCreated())
+            .andExpect(MockMvcResultMatchers.header().exists("Location"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(6))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.currency").value("EUR"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$._links.self.href").isString())
+            .andExpect(MockMvcResultMatchers.jsonPath("$._links.accounts.href").isString());
 
     AccountPO createdAccount = repository.findById(6L).orElse(null);
     Assertions.assertEquals(currency, createdAccount.getCurrency());
     Assertions.assertEquals(name, createdAccount.getName());
     Assertions.assertEquals(description, createdAccount.getDescription());
+  }
+
+  @WithMockCustomUser
+  @Test
+  void create_with_name_missing_response_bad_request() throws Exception {
+    String description = "updatedaccountdescription";
+    String currency = "CZK";
+
+    JSONObject createPayload = new JSONObject();
+    createPayload.put("description", description);
+    createPayload.put("currency", currency);
+
+    mvc.perform(
+                    MockMvcRequestBuilders.post("/accounts")
+                            .header("Content-Type", "application/json")
+                            .content(createPayload.toString()))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
   }
 
   @WithMockCustomUser

@@ -1,6 +1,6 @@
 package hu.readdeo.money.management.svc.account;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,15 +14,15 @@ import lombok.experimental.Accessors;
 public class Account {
   private Long id;
 
-  @NotNull(message = "name missing")
+  @NotBlank(message = "name missing")
   private String name = "";
 
   private String description = "";
 
-  @NotNull(message = "currency missing")
+  @NotBlank(message = "currency missing")
   private String currency;
 
-  @NotNull(message = "isCredit missing")
+  @NotBlank(message = "isCredit missing")
   private boolean isCredit;
 
   private BigDecimal initialCredit;

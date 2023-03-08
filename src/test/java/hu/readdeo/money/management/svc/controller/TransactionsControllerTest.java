@@ -37,22 +37,41 @@ class TransactionsControllerTest {
     requestBody.put("subCategory", 2);
 
     mvc.perform(
-            MockMvcRequestBuilders.post("/transactions")
-                .header("Content-Type", "application/json")
-                .content(requestBody.toString()))
-        .andDo(print())
-        .andExpect(status().isCreated())
-        .andExpect(MockMvcResultMatchers.header().exists("Location"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.id").isString())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.amount").value(-5000))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.dateTime").value("2021-03-19T21:16:34"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("desc"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.account").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.type").value("EXPENSE"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.mainCategory").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.subCategory").value(2))
-        .andExpect(MockMvcResultMatchers.jsonPath("$._links.self.href").isString())
-        .andExpect(MockMvcResultMatchers.jsonPath("$._links.transactionsPage.href").isString());
+                    MockMvcRequestBuilders.post("/transactions")
+                            .header("Content-Type", "application/json")
+                            .content(requestBody.toString()))
+            .andDo(print())
+            .andExpect(status().isCreated())
+            .andExpect(MockMvcResultMatchers.header().exists("Location"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").isString())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.amount").value(-5000))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.dateTime").value("2021-03-19T21:16:34"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("desc"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.account").value(1))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.type").value("EXPENSE"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.mainCategory").value(1))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.subCategory").value(2))
+            .andExpect(MockMvcResultMatchers.jsonPath("$._links.self.href").isString())
+            .andExpect(MockMvcResultMatchers.jsonPath("$._links.transactionsPage.href").isString());
+  }
+
+  @WithMockCustomUser
+  @Test
+  void create_missing_amount_response_400() throws Exception {
+    JSONObject requestBody = new JSONObject();
+    requestBody.put("dateTime", "2021-03-19T21:16:34");
+    requestBody.put("amount", -5000);
+    requestBody.put("description", "desc");
+    requestBody.put("type", "EXPENSE");
+    requestBody.put("mainCategory", 1);
+    requestBody.put("subCategory", 2);
+
+    mvc.perform(
+                    MockMvcRequestBuilders.post("/transactions")
+                            .header("Content-Type", "application/json")
+                            .content(requestBody.toString()))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
   }
 
   @WithMockCustomUser
