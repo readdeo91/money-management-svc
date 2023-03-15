@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,6 +55,11 @@ public class TransactionController {
     Transaction updatedTransaction = serviceAdapter.update(id, transactionUpdate);
     EntityModel<Transaction> entityModel = transactionModelAssembler.toModel(updatedTransaction);
     return ResponseEntity.ok(entityModel);
+  }
+
+  @PatchMapping("/")
+  public ResponseEntity<Void> patch() {
+    return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
   }
 
   @PatchMapping("/{id}")

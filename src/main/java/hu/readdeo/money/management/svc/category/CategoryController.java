@@ -52,6 +52,11 @@ public class CategoryController {
     return new ResponseEntity<>(entityModel, HttpStatus.OK);
   }
 
+  @PatchMapping("/")
+  public ResponseEntity<Void> patch() {
+    return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+  }
+
   @DeleteMapping("/{id}")
   public ResponseEntity<?> delete(@PathVariable("id") Long id) {
     categoryService.delete(id);
