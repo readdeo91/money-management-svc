@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Transaction {
-  private UUID id;
+  private Long id;
 
   @NotNull(message = "amount missing")
   private BigDecimal amount;

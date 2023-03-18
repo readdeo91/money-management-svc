@@ -43,7 +43,7 @@ public class TransactionController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<EntityModel<Transaction>> one(@PathVariable("id") UUID id) {
+  public ResponseEntity<EntityModel<Transaction>> one(@PathVariable("id") Long id) {
     Transaction transaction = serviceAdapter.findById(id);
     EntityModel<Transaction> entityModel = transactionModelAssembler.toModel(transaction);
     return ResponseEntity.ok(entityModel);
@@ -51,7 +51,7 @@ public class TransactionController {
 
   @PutMapping("/{id}")
   public ResponseEntity<EntityModel<Transaction>> update(
-      @PathVariable("id") UUID id, @Valid @RequestBody Transaction transactionUpdate) {
+      @PathVariable("id") Long id, @Valid @RequestBody Transaction transactionUpdate) {
     Transaction updatedTransaction = serviceAdapter.update(id, transactionUpdate);
     EntityModel<Transaction> entityModel = transactionModelAssembler.toModel(updatedTransaction);
     return ResponseEntity.ok(entityModel);
@@ -64,14 +64,14 @@ public class TransactionController {
 
   @PatchMapping("/{id}")
   public ResponseEntity<EntityModel<Transaction>> patch(
-      @PathVariable("id") @Valid UUID id, @Valid @RequestBody JsonPatch patch) {
+      @PathVariable("id") @Valid Long id, @Valid @RequestBody JsonPatch patch) {
     Transaction patchedTransaction = serviceAdapter.patch(id, patch);
     EntityModel<Transaction> entityModel = transactionModelAssembler.toModel(patchedTransaction);
     return ResponseEntity.ok(entityModel);
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<?> delete(@PathVariable("id") UUID id) {
+  public ResponseEntity<?> delete(@PathVariable("id") Long id) {
     serviceAdapter.delete(id);
     return ResponseEntity.noContent().build();
   }

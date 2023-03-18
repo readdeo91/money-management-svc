@@ -7,12 +7,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-interface TransactionsRepository extends JpaRepository<TransactionPO, UUID> {
+interface TransactionsRepository extends JpaRepository<TransactionPO, Long> {
   Page<TransactionPO> findByUserOrderByDateTimeDesc(User user, Pageable pageable);
 
-  Boolean existsByUserAndId(User user, UUID id);
+  Boolean existsByUserAndId(User user, Long id);
 
-  Optional<TransactionPO> findFirstByUserAndId(User user, UUID id);
+  Optional<TransactionPO> findFirstByUserAndId(User user, Long id);
 
-  void deleteByUserAndId(User user, UUID id);
+  void deleteByUserAndId(User user, Long id);
 }
