@@ -254,26 +254,61 @@ class AccountControllerTest {
     patchOperationsPayload.put(patchCurrency);
 
     mvc.perform(
-            MockMvcRequestBuilders.patch("/accounts/2")
-                .content(patchOperationsPayload.toString())
-                .header("Content-Type", "application/json"))
-        .andDo(print())
-        .andExpect(status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(2))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(description))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.currency").value(currency))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(name))
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("$._links.self.href")
-                .value("http://localhost/accounts/2"))
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("$._links.accounts.href")
-                .value("http://localhost/accounts"));
+                    MockMvcRequestBuilders.patch("/accounts/2")
+                            .content(patchOperationsPayload.toString())
+                            .header("Content-Type", "application/json"))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(2))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(description))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.currency").value(currency))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(name))
+            .andExpect(
+                    MockMvcResultMatchers.jsonPath("$._links.self.href")
+                            .value("http://localhost/accounts/2"))
+            .andExpect(
+                    MockMvcResultMatchers.jsonPath("$._links.accounts.href")
+                            .value("http://localhost/accounts"));
 
     AccountPO updatedAccount = repository.findById(2L).orElse(null);
     Assertions.assertEquals(name, updatedAccount.getName());
     Assertions.assertEquals(description, updatedAccount.getDescription());
     Assertions.assertEquals(currency, updatedAccount.getCurrency());
+  }
+
+  @WithMockCustomUser
+  @Test
+  void patch_collection_not_allowed() throws Exception {
+    String name = "patchedaccountname";
+    String description = "patchedaccountdescription";
+    String currency = "PLN";
+
+    JSONObject patchName = new JSONObject();
+    patchName.put("op", "replace");
+    patchName.put("path", "/name");
+    patchName.put("value", name);
+
+    JSONObject patchDescription = new JSONObject();
+    patchDescription.put("op", "replace");
+    patchDescription.put("path", "/description");
+    patchDescription.put("value", description);
+
+    JSONObject patchCurrency = new JSONObject();
+    patchCurrency.put("op", "replace");
+    patchCurrency.put("path", "/currency");
+    patchCurrency.put("value", currency);
+
+    JSONArray patchOperationsPayload = new JSONArray();
+    patchOperationsPayload.put(patchName);
+    patchOperationsPayload.put(patchDescription);
+    patchOperationsPayload.put(patchCurrency);
+
+    mvc.perform(
+                    MockMvcRequestBuilders.patch("/accounts")
+                            .content(patchOperationsPayload.toString())
+                            .header("Content-Type", "application/json"))
+            .andDo(print())
+            .andExpect(status().isMethodNotAllowed());
   }
 
   @WithMockCustomUser
