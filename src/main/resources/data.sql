@@ -24,7 +24,7 @@ INSERT INTO public.category (id, color, name, parent_id, user_id) VALUES (DEFAUL
 INSERT INTO public.category (id, color, name, parent_id, user_id) VALUES (DEFAULT, null, 'Car', null, 2);
 INSERT INTO public.category (id, color, name, parent_id, user_id) VALUES (DEFAULT, null, 'Gift', 5, 2);
 
-INSERT INTO public.transaction (id, amount, date_time, description, source_account_id, main_category_id, sub_category_id, destination_account_id, user_id) VALUES ('1240c63e-8b6d-44ab-b18e-1367a22765b7', '-1000', '2021-03-17 18:16:31.000000', 'sajt', 3, 1, 2, null, 1);
-INSERT INTO public.transaction (id, amount, date_time, description, source_account_id, main_category_id, sub_category_id, destination_account_id, user_id) VALUES ('1240c63e-8b6d-44ab-b18e-1367a22765b8', '-1000', '2021-03-17 18:16:31.000000', 'sajt', 3, 1, 2, null, 1);
-INSERT INTO public.transaction (id, amount, date_time, description, source_account_id, main_category_id, sub_category_id, destination_account_id, user_id) VALUES ('1240c63e-8b6d-44ab-b18e-1367a22765b9', '-1000', '2021-03-17 18:16:31.000000', 'sajt', 3, 1, 2, null, 1);
-INSERT INTO public.transaction (id, amount, date_time, description, source_account_id, main_category_id, sub_category_id, destination_account_id, user_id) VALUES ('1240c63e-8b6d-44ab-b18e-1367a2276510', '-1000', '2021-03-17 18:16:31.000000', 'sajt', 5, 6, 2, null, 2);
+INSERT INTO public.transaction (id, amount, date_time, description, source_account_id, main_category_id, sub_category_id, destination_account_id, user_id) VALUES ('1', '-1000', '2021-03-17 18:16:31.000000', 'sajt', 3, 1, 2, null, 1);
+INSERT INTO public.transaction (id, amount, date_time, description, source_account_id, main_category_id, sub_category_id, destination_account_id, user_id) VALUES ('2', '-1000', '2021-03-17 18:16:31.000000', 'sajt', 3, 1, 2, null, 1);
+INSERT INTO public.transaction (id, amount, date_time, description, source_account_id, main_category_id, sub_category_id, destination_account_id, user_id) VALUES ('3', '-1000', '2021-03-17 18:16:31.000000', 'sajt', 3, 1, 2, null, 1);
+INSERT INTO public.transaction (id, amount, date_time, description, source_account_id, main_category_id, sub_category_id, destination_account_id, user_id) VALUES ('4', '-1000', '2021-03-17 18:16:31.000000', 'sajt', 5, 6, 2, null, 2);
