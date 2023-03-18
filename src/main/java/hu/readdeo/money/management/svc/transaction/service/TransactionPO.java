@@ -5,11 +5,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import hu.readdeo.money.management.svc.account.service.AccountPO;
 import hu.readdeo.money.management.svc.category.service.CategoryPO;
 import hu.readdeo.money.management.svc.security.model.User;
+import hu.readdeo.money.management.svc.transaction.id.TransactionCompositeId;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,8 +21,9 @@ import lombok.experimental.Accessors;
 @Table(name = "transaction", schema = "public")
 @AllArgsConstructor
 @NoArgsConstructor
+@IdClass(TransactionCompositeId.class)
 public class TransactionPO {
-  @Id private UUID id;
+  @Id private Long id;
 
   @ManyToOne
   @JsonIgnore
@@ -39,6 +40,7 @@ public class TransactionPO {
 
   @Column private String description = "";
 
+  @Id
   @ManyToOne
   @NotNull(message = "sourceAccount missing")
   @JsonIdentityReference(alwaysAsId = true)

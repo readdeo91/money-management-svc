@@ -9,9 +9,11 @@ import hu.readdeo.money.management.svc.category.service.CategoryValidator;
 import hu.readdeo.money.management.svc.exception.ErrorResponse;
 import hu.readdeo.money.management.svc.security.model.User;
 import hu.readdeo.money.management.svc.security.util.AuthenticationFacade;
+import hu.readdeo.money.management.svc.transaction.id.TransactionCompositeIdHandler;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,17 +28,18 @@ import org.springframework.util.ObjectUtils;
 public class TransactionService {
 
   private final TransactionsRepository transactionsRepository;
+  private final TransactionCompositeIdHandler idHandler;
   private final CategoryValidator categoryValidator;
   private final AuthenticationFacade auth;
 
   @Transactional
   public TransactionPO create(TransactionPO transaction) {
     validateCreation(transaction);
-    setUserAndAddId(transaction);
+    setUserAndId(transaction);
     return saveOrErrorResponse(transaction);
   }
 
-  public TransactionPO findById(UUID id) {
+  public TransactionPO findById(Long id) {
     TransactionPO transaction =
         transactionsRepository.findFirstByUserAndId(auth.getUser(), id).orElse(null);
     throwIfNotFound(transaction);
@@ -50,13 +53,13 @@ public class TransactionService {
     return transactionPage;
   }
 
-  public TransactionPO patch(UUID id, JsonPatch patch) {
+  public TransactionPO patch(Long id, JsonPatch patch) {
     throwIfDoesntExist(id);
     TransactionPO patchedTransaction = applyPatch(patch, id);
     return update(id, patchedTransaction);
   }
 
-  public TransactionPO update(UUID id, TransactionPO transactionUpdate) {
+  public TransactionPO update(Long id, TransactionPO transactionUpdate) {
     throwIfDoesntExist(id);
     setIdAndUser(id, transactionUpdate);
     categoryValidator.validateCategories(transactionUpdate);
@@ -68,20 +71,20 @@ public class TransactionService {
   }
 
   @Transactional
-  public void delete(UUID id) {
+  public void delete(Long id) {
     User user = auth.getUser();
     throwIfDoesntExist(id);
     transactionsRepository.deleteByUserAndId(user, id);
   }
 
-  private void setIdAndUser(UUID id, TransactionPO transactionUpdate) {
+  private void setIdAndUser(Long id, TransactionPO transactionUpdate) {
     transactionUpdate.setId(id);
     transactionUpdate.setUser(auth.getUser());
   }
 
-  private void setUserAndAddId(TransactionPO transaction) {
+  private void setUserAndId(TransactionPO transaction) {
     transaction.setUser(auth.getUser());
-    transaction.setId(UUID.randomUUID());
+    idHandler.setIdForNewTransaction(transaction);
   }
 
   private void throwIfContainsId(TransactionPO transaction) {
@@ -102,13 +105,13 @@ public class TransactionService {
     }
   }
 
-  private void throwIfDoesntExist(UUID id) {
+  private void throwIfDoesntExist(Long id) {
     if (!transactionsRepository.existsByUserAndId(auth.getUser(), id)) {
       throw new ErrorResponse("Transaction not found", HttpStatus.NOT_FOUND);
     }
   }
 
-  private TransactionPO applyPatch(JsonPatch patch, UUID id) {
+  private TransactionPO applyPatch(JsonPatch patch, Long id) {
     TransactionPO targetTransaction = findById(id);
     ObjectMapper objectMapper = new ObjectMapper();
     try {
