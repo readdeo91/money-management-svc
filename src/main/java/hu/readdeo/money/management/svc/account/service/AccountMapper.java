@@ -13,6 +13,7 @@ abstract class AccountMapper {
 
   @Autowired AuthenticationFacade authenticationFacade;
 
+  @Mapping(target = "balance", ignore = true)
   public abstract Account toAccountDTO(AccountPO transaction);
 
   public abstract List<Account> toAccountDTOList(List<AccountPO> transactionList);

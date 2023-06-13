@@ -6,12 +6,14 @@ import hu.readdeo.money.management.svc.security.payload.User;
 import hu.readdeo.money.management.svc.security.payload.UserIdentityAvailability;
 import hu.readdeo.money.management.svc.security.payload.UserSummary;
 import hu.readdeo.money.management.svc.security.repository.UserRepository;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
+@Tag(name = "user")
 public class UserController {
 
   @Autowired private UserRepository userRepository;

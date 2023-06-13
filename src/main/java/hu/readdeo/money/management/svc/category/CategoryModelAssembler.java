@@ -17,9 +17,12 @@ public class CategoryModelAssembler
     implements RepresentationModelAssembler<Category, EntityModel<Category>> {
   @Override
   public EntityModel<Category> toModel(@NotNull Category category) {
-    Link selfLink = linkTo(methodOn(CategoryController.class).one(category.getId())).withSelfRel();
-    Affordance update = afford(methodOn(CategoryController.class).update(category.getId(), null));
-    Link aggregateRoute = linkTo(methodOn(CategoryController.class).all()).withRel("categories");
+    Link selfLink =
+        linkTo(methodOn(CategoryController.class).getCategory(category.getId())).withSelfRel();
+    Affordance update =
+        afford(methodOn(CategoryController.class).updateCategory(category.getId(), null));
+    Link aggregateRoute =
+        linkTo(methodOn(CategoryController.class).getAllCategories()).withRel("categories");
     return EntityModel.of(category, selfLink.andAffordance(update), aggregateRoute);
   }
 
@@ -33,10 +36,11 @@ public class CategoryModelAssembler
                 category ->
                     EntityModel.of(
                         category,
-                        linkTo(methodOn(CategoryController.class).one(category.getId()))
+                        linkTo(methodOn(CategoryController.class).getCategory(category.getId()))
                             .withSelfRel()))
             .collect(Collectors.toList());
     return CollectionModel.of(
-        entityModelList, linkTo(methodOn(CategoryController.class).all()).withRel("categories"));
+        entityModelList,
+        linkTo(methodOn(CategoryController.class).getAllCategories()).withRel("categories"));
   }
 }

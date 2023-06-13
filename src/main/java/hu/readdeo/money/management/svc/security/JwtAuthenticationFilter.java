@@ -1,5 +1,6 @@
 package hu.readdeo.money.management.svc.security;
 
+import hu.readdeo.money.management.svc.exception.ErrorResponse;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,7 +29,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
     try {
       String jwt = getJwtFromRequest(request);
-
       if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
         Long userId = tokenProvider.getUserIdFromJWT(jwt);
 
@@ -43,6 +44,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+      } else {
+        throw new ErrorResponse(HttpStatus.UNAUTHORIZED);
       }
     } catch (Exception ex) {
       log.error("Could not set user authentication in security context", ex);

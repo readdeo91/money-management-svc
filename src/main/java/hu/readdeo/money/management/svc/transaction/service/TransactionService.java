@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
+import hu.readdeo.money.management.svc.account.service.AccountPO;
 import hu.readdeo.money.management.svc.category.service.CategoryValidator;
 import hu.readdeo.money.management.svc.exception.ErrorResponse;
 import hu.readdeo.money.management.svc.security.model.User;
@@ -13,7 +14,6 @@ import hu.readdeo.money.management.svc.transaction.id.TransactionCompositeIdHand
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.UUID;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,6 +32,15 @@ public class TransactionService {
   private final CategoryValidator categoryValidator;
   private final AuthenticationFacade auth;
 
+  public long accountBalance(AccountPO account) {
+    try {
+      return transactionsRepository.accountBalance(account);
+    } catch (Exception e) {
+      log.error("Failed to get balance for account: {}, error: {}", account, e.toString());
+    }
+    return 0;
+  }
+
   @Transactional
   public TransactionPO create(TransactionPO transaction) {
     validateCreation(transaction);
@@ -48,7 +57,7 @@ public class TransactionService {
 
   public Page<TransactionPO> getPage(Pageable pageable) {
     Page<TransactionPO> transactionPage =
-        transactionsRepository.findByUserOrderByDateTimeDesc(auth.getUser(), pageable);
+        transactionsRepository.findByUserOrderByDateTimeAsc(auth.getUser(), pageable);
     throwIfNotFound(transactionPage);
     return transactionPage;
   }
