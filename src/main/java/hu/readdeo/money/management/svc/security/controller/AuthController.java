@@ -11,6 +11,7 @@ import hu.readdeo.money.management.svc.security.payload.LoginRequest;
 import hu.readdeo.money.management.svc.security.payload.SignUpRequest;
 import hu.readdeo.money.management.svc.security.repository.RoleRepository;
 import hu.readdeo.money.management.svc.security.repository.UserRepository;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.Collections;
@@ -30,6 +31,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "auth")
 public class AuthController {
 
   @Autowired AuthenticationManager authenticationManager;
@@ -38,7 +40,7 @@ public class AuthController {
   @Autowired PasswordEncoder passwordEncoder;
   @Autowired JwtTokenProvider tokenProvider;
 
-  @PostMapping("/signin")
+  @PostMapping("/login")
   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
     Authentication authentication =

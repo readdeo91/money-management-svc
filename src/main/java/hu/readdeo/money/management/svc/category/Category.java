@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.util.ObjectUtils;
 
 @Data
@@ -16,9 +17,11 @@ public class Category {
 
   @NotBlank(message = "name missing")
   private String name;
+
   private Long parentId;
   private String color;
 
+  @JsonIgnore
   public boolean isMainCategory() {
     return ObjectUtils.isEmpty(parentId);
   }

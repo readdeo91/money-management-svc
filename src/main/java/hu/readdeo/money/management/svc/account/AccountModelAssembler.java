@@ -18,9 +18,12 @@ public class AccountModelAssembler
     implements RepresentationModelAssembler<Account, EntityModel<Account>> {
   @Override
   public EntityModel<Account> toModel(@NotNull Account account) {
-    Link selfLink = linkTo(methodOn(AccountController.class).one(account.getId())).withSelfRel();
-    Affordance update = afford(methodOn(AccountController.class).update(account.getId(), null));
-    Link aggregateRoute = linkTo(methodOn(AccountController.class).all()).withRel("accounts");
+    Link selfLink =
+        linkTo(methodOn(AccountController.class).getAccount(account.getId())).withSelfRel();
+    Affordance update =
+        afford(methodOn(AccountController.class).updateAccount(account.getId(), null));
+    Link aggregateRoute =
+        linkTo(methodOn(AccountController.class).getAllAccounts()).withRel("accounts");
     return EntityModel.of(account, selfLink.andAffordance(update), aggregateRoute);
   }
 
@@ -34,12 +37,13 @@ public class AccountModelAssembler
                 account ->
                     EntityModel.of(
                         account,
-                        linkTo(methodOn(AccountController.class).one(account.getId()))
+                        linkTo(methodOn(AccountController.class).getAccount(account.getId()))
                             .withSelfRel()))
             .collect(Collectors.toList());
     return CollectionModel.of(
         entityModelList,
-        linkTo(methodOn(AccountController.class).page(Pageable.ofSize(20))).withRel("accountsPage"),
-        linkTo(methodOn(AccountController.class).all()).withRel("accounts"));
+        linkTo(methodOn(AccountController.class).getAccountPage(Pageable.ofSize(20)))
+            .withRel("accountsPage"),
+        linkTo(methodOn(AccountController.class).getAllAccounts()).withRel("accounts"));
   }
 }

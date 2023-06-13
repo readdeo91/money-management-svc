@@ -17,18 +17,18 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 public class TransactionIdCounterPO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @ManyToOne
-    @NotNull(message = "sourceAccount missing")
-    @JsonIdentityReference(alwaysAsId = true)
-    private AccountPO sourceAccount;
+  @ManyToOne
+  @NotNull(message = "sourceAccount missing")
+  @JsonIdentityReference(alwaysAsId = true)
+  private AccountPO sourceAccount;
 
-    private Long lastId;
+  private Long lastId;
 
-    public Long getNextId() {
-        return lastId++;
-    }
+  public Long getNextId() {
+    return lastId++;
+  }
 }

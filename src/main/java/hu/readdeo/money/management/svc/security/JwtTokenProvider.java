@@ -3,10 +3,15 @@ package hu.readdeo.money.management.svc.security;
 import hu.readdeo.money.management.svc.security.model.User;
 import io.jsonwebtoken.*;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -27,7 +32,18 @@ public class JwtTokenProvider {
     Date now = new Date();
     Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
+    Map<String, Object> map = new HashMap<>();
+    map.put("name", user.getName());
+
+    List<String> roles =
+        user.getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority)
+            .collect(Collectors.toList());
+    ;
+    map.put("roles", roles);
+
     return Jwts.builder()
+        .addClaims(map)
         .setSubject(Long.toString(user.getId()))
         .setIssuedAt(new Date())
         .setExpiration(expiryDate)

@@ -5,7 +5,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Affordance;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -19,11 +18,12 @@ public class TransactionModelAssembler
   @Override
   public EntityModel<Transaction> toModel(@NotNull Transaction transaction) {
     Link selfLink =
-        linkTo(methodOn(TransactionController.class).one(transaction.getId())).withSelfRel();
+        linkTo(methodOn(TransactionController.class).getTransaction(transaction.getId()))
+            .withSelfRel();
     Affordance update =
-        afford(methodOn(TransactionController.class).update(transaction.getId(), null));
+        afford(methodOn(TransactionController.class).updateTransaction(transaction.getId(), null));
     Link aggregateRoute =
-        linkTo(methodOn(TransactionController.class).page(Pageable.ofSize(20)))
+        linkTo(methodOn(TransactionController.class).getTransactionPage(1, 20))
             .withRel("transactionsPage");
     return EntityModel.of(transaction, selfLink.andAffordance(update), aggregateRoute);
   }
@@ -38,12 +38,14 @@ public class TransactionModelAssembler
                 transaction ->
                     EntityModel.of(
                         transaction,
-                        linkTo(methodOn(TransactionController.class).one(transaction.getId()))
+                        linkTo(
+                                methodOn(TransactionController.class)
+                                    .getTransaction(transaction.getId()))
                             .withSelfRel()))
             .collect(Collectors.toList());
     return CollectionModel.of(
         entityModelList,
-        linkTo(methodOn(TransactionController.class).page(Pageable.ofSize(20)))
+        linkTo(methodOn(TransactionController.class).getTransactionPage(1, 20))
             .withRel("transactionsPage"));
   }
 }

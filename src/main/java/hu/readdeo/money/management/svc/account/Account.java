@@ -22,8 +22,9 @@ public class Account {
   @NotBlank(message = "currency missing")
   private String currency;
 
-  @NotBlank(message = "isCredit missing")
   private boolean isCredit;
 
   private BigDecimal initialCredit;
+
+  private BigDecimal balance;
 }

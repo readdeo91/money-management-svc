@@ -2,6 +2,8 @@ package hu.readdeo.money.management.svc.account.service;
 
 import com.github.fge.jsonpatch.JsonPatch;
 import hu.readdeo.money.management.svc.account.Account;
+import hu.readdeo.money.management.svc.transaction.service.TransactionService;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,6 +16,7 @@ public class AccountServiceAdapter {
 
   private final AccountMapper mapper;
   private final AccountService service;
+  private final TransactionService transactionService;
 
   public Account create(Account account) {
     AccountPO accountModel = mapper.toAccountModel(account);
@@ -26,7 +29,12 @@ public class AccountServiceAdapter {
 
   public List<Account> findAll() {
     List<AccountPO> accounts = service.findAll();
-    return mapper.toAccountDTOList(accounts);
+    List<Account> accountDTOs = mapper.toAccountDTOList(accounts);
+    for (int i = 0; i < accounts.size(); i++) {
+      long balance = transactionService.accountBalance(accounts.get(i));
+      accountDTOs.get(i).setBalance(BigDecimal.valueOf(balance));
+    }
+    return accountDTOs;
   }
 
   public Page<Account> getPage(Pageable pageable) {

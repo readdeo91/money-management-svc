@@ -36,21 +36,22 @@ class TransactionsControllerTest {
     requestBody.put("subCategory", 2);
 
     mvc.perform(
-                    MockMvcRequestBuilders.post("/transactions")
-                            .header("Content-Type", "application/json")
-                            .content(requestBody.toString()))
-            .andDo(print())
-            .andExpect(status().isCreated())
-            .andExpect(MockMvcResultMatchers.header().exists("Location"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.amount").value(-5000))
-//            .andExpect(MockMvcResultMatchers.jsonPath("$.dateTime").value("2021-03-19T21:16:34"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("desc"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.sourceAccount").value(1))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.mainCategory").value(1))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.subCategory").value(2))
-            .andExpect(MockMvcResultMatchers.jsonPath("$._links.self.href").isString())
-            .andExpect(MockMvcResultMatchers.jsonPath("$._links.transactionsPage.href").isString());
+            MockMvcRequestBuilders.post("/transactions")
+                .header("Content-Type", "application/json")
+                .content(requestBody.toString()))
+        .andDo(print())
+        .andExpect(status().isCreated())
+        .andExpect(MockMvcResultMatchers.header().exists("Location"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.amount").value(-5000))
+        //
+        // .andExpect(MockMvcResultMatchers.jsonPath("$.dateTime").value("2021-03-19T21:16:34"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("desc"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.sourceAccount").value(1))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.mainCategory").value(1))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.subCategory").value(2))
+        .andExpect(MockMvcResultMatchers.jsonPath("$._links.self.href").isString())
+        .andExpect(MockMvcResultMatchers.jsonPath("$._links.transactionsPage.href").isString());
   }
 
   @WithMockCustomUser
@@ -64,11 +65,11 @@ class TransactionsControllerTest {
     requestBody.put("subCategory", 2);
 
     mvc.perform(
-                    MockMvcRequestBuilders.post("/transactions")
-                            .header("Content-Type", "application/json")
-                            .content(requestBody.toString()))
-            .andDo(print())
-            .andExpect(status().isBadRequest());
+            MockMvcRequestBuilders.post("/transactions")
+                .header("Content-Type", "application/json")
+                .content(requestBody.toString()))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
   }
 
   @WithMockCustomUser
@@ -92,7 +93,8 @@ class TransactionsControllerTest {
         .andExpect(MockMvcResultMatchers.header().exists("Location"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
         .andExpect(MockMvcResultMatchers.jsonPath("$.amount").value(5000))
-//        .andExpect(MockMvcResultMatchers.jsonPath("$.dateTime").value("2021-03-19T21:16:34"))
+        //
+        // .andExpect(MockMvcResultMatchers.jsonPath("$.dateTime").value("2021-03-19T21:16:34"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("desc"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.sourceAccount").value(1))
         .andExpect(MockMvcResultMatchers.jsonPath("$.mainCategory").value(1))
@@ -121,7 +123,8 @@ class TransactionsControllerTest {
         .andExpect(MockMvcResultMatchers.header().exists("Location"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
         .andExpect(MockMvcResultMatchers.jsonPath("$.amount").value(-5000))
-//        .andExpect(MockMvcResultMatchers.jsonPath("$.dateTime").value("2021-03-19T21:16:34"))
+        //
+        // .andExpect(MockMvcResultMatchers.jsonPath("$.dateTime").value("2021-03-19T21:16:34"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("desc"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.sourceAccount").value(1))
         .andExpect(MockMvcResultMatchers.jsonPath("$.mainCategory").value(1))
@@ -149,7 +152,8 @@ class TransactionsControllerTest {
         .andExpect(MockMvcResultMatchers.header().exists("Location"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
         .andExpect(MockMvcResultMatchers.jsonPath("$.amount").value(-5000))
-//        .andExpect(MockMvcResultMatchers.jsonPath("$.dateTime").value("2021-03-19T21:16:34"))
+        //
+        // .andExpect(MockMvcResultMatchers.jsonPath("$.dateTime").value("2021-03-19T21:16:34"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("desc"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.sourceAccount").value(1))
         .andExpect(MockMvcResultMatchers.jsonPath("$.mainCategory").value(1))
@@ -186,7 +190,8 @@ class TransactionsControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.transactions[0].id").isNumber())
         .andExpect(
             MockMvcResultMatchers.jsonPath("$._embedded.transactions[0].amount").value(-5000))
-        .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.transactions[0].sourceAccount").value(1))
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("$._embedded.transactions[0].sourceAccount").value(1))
         .andExpect(
             MockMvcResultMatchers.jsonPath("$._embedded.transactions[0].mainCategory").value(1))
         .andExpect(
@@ -204,9 +209,7 @@ class TransactionsControllerTest {
   @WithMockCustomUser
   @Test
   void getOne() throws Exception {
-    mvc.perform(
-            MockMvcRequestBuilders.get("/transactions/1")
-                .accept(MediaType.APPLICATION_JSON))
+    mvc.perform(MockMvcRequestBuilders.get("/transactions/1").accept(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
@@ -233,15 +236,9 @@ class TransactionsControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
         .andExpect(MockMvcResultMatchers.jsonPath("$.amount").value(-200L))
         .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("update2"))
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("$.sourceAccount")
-                .value("1"))
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("$.mainCategory")
-                .value("3"))
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("$.subCategory")
-                .value("4"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.sourceAccount").value("1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.mainCategory").value("3"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.subCategory").value("4"))
         .andExpect(
             MockMvcResultMatchers.jsonPath("$._links.self.href")
                 .value("http://localhost/transactions/1"))

@@ -28,6 +28,6 @@ public class AccountPO {
   @Column private String name = "";
   @Column private String description = "";
   @Column @NotNull private String currency;
-  @Column @NotNull private boolean isCredit;
+  @Column private boolean isCredit;
   @Column private BigDecimal initialCredit;
 }

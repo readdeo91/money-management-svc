@@ -42,8 +42,10 @@ public class SecurityConfig {
         .authorizeHttpRequests(
             (requests) ->
                 requests
-                    //                    .requestMatchers(new
-                    // AntPathRequestMatcher("/openapi/openapi.yml")).permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/swagger-ui/*"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/v3/*"))
+                    .permitAll()
                     .requestMatchers(new AntPathRequestMatcher("/auth/**"))
                     .permitAll()
                     .requestMatchers(
